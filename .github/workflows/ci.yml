@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Build with warnings as errors
+        run: make CFLAGS="-O2 -Wall -Wextra -std=c11 -Werror"
+      - name: Inspect PID 1 and the current shell
+        run: |
+          ./processlens 1
+          ./processlens $$ | grep -q '^Threads: 1$'
+      - name: Top 5 by memory
+        run: ./processlens --top 5
+      - name: Error handling
+        run: |
+          set +e
+          ./processlens abc;        test $? -eq 2
+          ./processlens --top 0;    test $? -eq 2
+          ./processlens 999999999;  test $? -eq 1

@@ -51,7 +51,7 @@ make            # gcc -O2 -Wall -Wextra -std=c11
 ./processlens --top 5    # five processes using the most resident memory
 ```
 
-Example:
+Example (values vary by system):
 
 ```text
 $ ./processlens 1
